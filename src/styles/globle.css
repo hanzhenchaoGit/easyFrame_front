@@ -1,0 +1,8 @@
+.container {
+    margin:10px 20px 20px 20px;
+}
+
+fieldset {
+  border: 1px solid rgb(179, 174, 174);
+    border-radius: 11px;
+}
