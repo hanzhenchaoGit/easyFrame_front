@@ -68,92 +68,11 @@
       >
 
       <slot name="prepend" />
-      <template  v-for="(column, columnIndex) in columns">
-        <el-table-column :key="columnIndex" v-if="column.colType"
-          :column-key="column.columnKey"
-          :type="column.colType" :selectable="checkboxFun"
-          >
-        </el-table-column>
-        <el-table-column :key="columnIndex" v-else
-          :column-key="column.columnKey"
-          :prop="column.prop"
-          :label="column.label"
-          :fixed="column.fixed"
-          :width="column.width"
-          :render-header="column.renderHeader"
-          :sortable="column.sortable"
-          :sort-method="column.method"
-          :resizable="column.resizable"
-          :formatter="column.formatter"
-          :show-overflow-tooltip="column.showOverflowTooltip"
-          :align="column.align"
-          :header-align="column.headerAlign || column.align"
-          :class-name="column.className"
-          :label-class-name="column.labelClassName"
-          :selectable="column.selectable"
-          :reserve-selection="column.reserveSelection"
-          :filters="column.filters"
-          :filter-placement="column.filterPlacement"
-          :filter-multiple="column.filterMultiple"
-          :filter-method="column.filterMethod"
-          :filtered-value="column.filteredValue"
-          >
-            <el-table-column v-if='column.children||column.children.length>0' v-for="item1 in column.children"
-            :label="item1.label" :prop='item1.prop' :width='item1.width' :key="item1.id"
-            :fixed="item1.fixed"
-            :render-header="item1.renderHeader"
-            :sortable="item1.sortable"
-            :sort-method="item1.method"
-            :resizable="item1.resizable"
-            :formatter="item1.formatter"
-            :show-overflow-tooltip="item1.showOverflowTooltip"
-            :align="item1.align"
-            :header-align="item1.headerAlign || item1.align"
-            :class-name="item1.className"
-            :label-class-name="item1.labelClassName"
-            :selectable="item1.selectable"
-            :reserve-selection="item1.reserveSelection"
-            :filters="item1.filters"
-            :filter-placement="item1.filterPlacement"
-            :filter-multiple="item1.filterMultiple"
-            :filter-method="item1.filterMethod"
-            :filtered-value="item1.filteredValue">
-              <el-table-column v-if='item1.children||item1.children.length>0' v-for="item2 in item1.children"
-              :label="item2.label" :prop='item2.prop' :width='item2.width' :key="item2.id"
-              :fixed="item2.fixed"
-              :render-header="item2.renderHeader"
-              :sortable="item2.sortable"
-              :sort-method="item2.method"
-              :resizable="item2.resizable"
-              :formatter="item2.formatter"
-              :show-overflow-tooltip="item2.showOverflowTooltip"
-              :align="item2.align"
-              :header-align="item2.headerAlign || item2.align"
-              :class-name="item2.className"
-              :label-class-name="item2.labelClassName"
-              :selectable="item2.selectable"
-              :reserve-selection="item2.reserveSelection"
-              :filters="item2.filters"
-              :filter-placement="item2.filterPlacement"
-              :filter-multiple="item2.filterMultiple"
-              :filter-method="item2.filterMethod"
-              :filtered-value="item2.filteredValue">
-              </el-table-column>
-            </el-table-column>
-          <template slot-scope="scope" :scope="newSlotScope ? 'scope' : false ">
-            <span v-if="column.filter">
-              {{ Vue.filter(column['filter'])(scope.row[column.prop]) }}
-            </span>
-            <span v-else-if="column.slotName">
-              <slot :name="column.slotName" :row="scope.row" :$index="scope.$index" />
-            </span>
-            <span v-else>
-              {{ column.render ? column.render(scope.row) : scope.row[column.prop] }}
-            </span>
-          </template>
-        </el-table-column>
-      </template>
-
+      <column v-for="(item,index) in columns" :key="index" :column="item">
+        <template :slot="item.slotName" slot-scope="scope"  :scope="newSlotScope ? 'scope' : false ">
+          <slot :name="item.slotName" v-bind:row="scope.row"/>
+        </template>
+      </column>
       <slot name="append" />
 
     </el-table>
@@ -191,10 +110,11 @@
   import props from './props'
   import request from '@/utils/request'
   import searchForm from '../search/index.vue'
+  import column from '../column/index'
   export default {
     name: 'ElSearchTablePagination',
     components: {
-      searchForm
+      searchForm, column
     },
     props,
     data() {

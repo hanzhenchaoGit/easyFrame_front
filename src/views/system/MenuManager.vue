@@ -91,7 +91,7 @@
                 </el-row>
                 <el-row v-else>
                   <el-col :span="4">
-                    <svg-icon v-if= "data.children.length>0" icon-class='folder'></svg-icon>
+                    <svg-icon v-if= "data.children && data.children.length>0" icon-class='folder'></svg-icon>
                     <svg-icon v-else icon-class='file'></svg-icon>
                     <span >{{node.label}}</span>
                   </el-col>

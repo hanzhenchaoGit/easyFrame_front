@@ -476,7 +476,7 @@ export default {
         return (
           <span class='custom-tree-node'>
             <span>
-              {data.children.length > 0 ? (
+              {data.children && data.children.length > 0 ? (
                 <svg-icon icon-class='folder' />
               ) : (
                 <svg-icon icon-class='file' />

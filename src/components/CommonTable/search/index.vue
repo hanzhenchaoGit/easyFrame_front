@@ -10,13 +10,13 @@
                 type="primary"
                 :size="size"
                 @click.stop
-                @click="searchHandler"
+                @click.exact="searchHandler"
                 :loading="submitLoading">
                 {{ submitBtnText }}
               </common-button>
               <common-button type="primary" :plain="true"
                 :size="size" v-if="showResetBtn"
-                @click="resetForm"
+                @click.exact="resetForm"
                 @click.stop
                 svgIcon = "reset"
                 :loading="submitLoading">
@@ -77,7 +77,7 @@
           </el-form-item>
         </el-collapse-item>
       </el-collapse>
-      <span v-else>
+      <template v-else>
          <el-form-item v-for="(form, index) in forms" :key="index" :required="form.required"
           :prop="form.itemType != 'daterange' ? form.prop : (datePrefix + index)"
           :label="form.label" :rules="form.rules || []"
@@ -128,27 +128,27 @@
             :style="itemStyle + (form.itemWidth ? `width: ${form.itemWidth}px;` : '')"
             :picker-options="form.pickerOptions || {}" />
         </el-form-item>
-        <el-form-item label="" style="text-align:left">
-          <common-button v-if="showSearchBtn"
-            type="primary"
-            :size="size"
-            @click.stop
-            svgIcon="search"
-            @click="searchHandler"
-            :loading="submitLoading">
-            {{ submitBtnText }}
-          </common-button>
-          <common-button type="primary" :plain="true"
-            :size="size" v-if="showResetBtn"
-            @click="resetForm"
-             svgIcon = "reset"
-            @click.stop
-            :loading="submitLoading">
-            {{ resetBtnText }}
-          </common-button>
-          <slot name="formbutton"></slot>
-        </el-form-item>
-      </span>
+          <span class="form-buttons">
+            <common-button v-if="showSearchBtn"
+              type="primary"
+              :size="size"
+              @click.stop
+              svgIcon="search"
+              @click.exact="searchHandler"
+              :loading="submitLoading">
+              {{ submitBtnText }}
+            </common-button>
+            <common-button type="primary" :plain="true"
+              :size="size" v-if="showResetBtn"
+              @click.exact="resetForm"
+              svgIcon = "reset"
+              @click.stop
+              :loading="submitLoading">
+              {{ resetBtnText }}
+            </common-button>
+            <slot name="formbutton"></slot>
+          </span>
+      </template>
   </el-form>
 </template>
 
@@ -353,5 +353,15 @@
     transition-delay: initial;
     outline: 0;
 }
-
+.form-buttons {
+  height: 46px;
+  display: block;
+}
+.el-collapse-item__wrap {
+  will-change: height;
+  overflow: hidden;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  border-bottom: 0px solid #ebeef5;
+}
 </style>

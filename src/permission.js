@@ -31,21 +31,21 @@ router.beforeEach((to, from, next) => {
           })
         })
       } else {
-        const data = {
-          type: '页面跳转',
-          operateName: to.meta.title ? to.meta.title + ':' + to.path : '' + ':' + to.path,
-          routerName: from.meta.title ? to.meta.title : '无路由名称',
-          routerPath: from.path
-        }
-        request({
-          url: 'user/addSysUserFrontlog',
-          method: 'post',
-          data
-        }).then(response => {
-          if (response.success) {
-            // console.log('日志记录成功')
-          }
-        })
+        // const data = {
+        //   type: '页面跳转',
+        //   operateName: to.meta.title ? to.meta.title + ':' + to.path : '' + ':' + to.path,
+        //   routerName: from.meta.title ? to.meta.title : '无路由名称',
+        //   routerPath: from.path
+        // }
+        // request({
+        //   url: 'user/addSysUserFrontlog',
+        //   method: 'post',
+        //   data
+        // }).then(response => {
+        //   if (response.success) {
+        //     // console.log('日志记录成功')
+        //   }
+        // })
         next()//
         // 可删 ↑
       }

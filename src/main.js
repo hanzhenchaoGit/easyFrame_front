@@ -4,6 +4,12 @@ import 'normalize.css/normalize.css'// A modern alternative to CSS resets
 import waves from '@/directive/waves/index.js'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import '../node_modules/ag-grid-community/dist/styles/ag-grid.css'
+import '../node_modules/ag-grid-community/dist/styles/ag-theme-dark.css'
+import '../node_modules/ag-grid-community/dist/styles/ag-theme-blue.css'
+import '../node_modules/ag-grid-community/dist/styles/ag-theme-bootstrap.css'
+import '../node_modules/ag-grid-community/dist/styles/ag-theme-material.css'
+import '../node_modules/ag-grid-community/dist/styles/ag-theme-fresh.css'
 
 import '@/styles/index.scss' // global css
 
@@ -21,7 +27,7 @@ import commonTable from '@/components/CommonTable/table'
 import commonSelect from '@/components/Select'
 import commonButton from '@/components/Button'
 import commonUpload from '@/components/Upload'
-
+import AgTable from '@/components/AgTable'
 import * as filters from './filters' // global filters
 import request from '@/utils/request'
 
@@ -40,6 +46,7 @@ Vue.component('common-button', commonButton)
 Vue.component('common-table', commonTable)
 Vue.component('common-select', commonSelect)
 Vue.component('common-upload', commonUpload)
+Vue.component('ag-table', AgTable)
 Vue.prototype.baseUrl = 'http://' + location.host.replace(location.port, '9999')
 Vue.prototype.defaultHeader = 'http://img3.imgtn.bdimg.com/it/u=2220182970,3184364485&fm=200&gp=0.jpg'
 // register global utility filters.
@@ -64,7 +71,9 @@ Vue.directive('has', {
       }
     })
     if (!hasPermission) {
-      el.parentNode.removeChild(el)
+      if (el.parentNode) {
+        el.parentNode.removeChild(el)
+      }
     }
   }
 })

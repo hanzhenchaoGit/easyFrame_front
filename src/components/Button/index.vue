@@ -68,15 +68,15 @@
             routerPath: this.$root._route.path
           }
 
-          this.$request({
-            url: 'user/addSysUserFrontlog',
-            method: 'post',
-            data
-          }).then(response => {
-            if (response.success) {
-            // console.log('日志记录成功')
-            }
-          })
+          // this.$request({
+          //   url: 'user/addSysUserFrontlog',
+          //   method: 'post',
+          //   data
+          // }).then(response => {
+          //   if (response.success) {
+          //   // console.log('日志记录成功')
+          //   }
+          // })
         }
 
         this.$emit('click', ev)
