@@ -15,16 +15,18 @@
     :gridOptions="gridOptions"
     @cellClicked="cellClicked"
     @selectionChanged="onSelectionChanged"
+    @gridReady="onGridReady"
     >
   </ag-grid-vue>
   <div class="block">
     <el-pagination
+      background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="pageNumber"
       :page-sizes="pageSizes"
       :page-size="defaultPageSize"
-      layout="total, sizes, prev, pager, next, jumper"
+      layout="->,total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
   </div>
@@ -55,6 +57,15 @@
       }
     },
     methods: {
+      // 表格创建完成后执行
+      onGridReady (params) {
+        // 获取gridApi
+        this.gridApi = params.api
+        this.columnApi = params.columnApi
+        // 调整表格列宽大小自适应
+        this.gridApi.sizeColumnsToFit()
+        this.$emit('onGridReady', params)
+      },
       //获取ag-grid对象
       getGrid() {
         return this.$refs.grid
@@ -84,7 +95,7 @@
         const data = Object.assign({}, param, {
           pageNumber: this.pageNumber, pageSize: this.pageSize
         })
-        this.$request({ url: this.url,method: 'post', data })
+        return this.$request({ url: this.url,method: 'post', data })
         .then(response => {
           const result = response.data;
           if (this.showPagination) {

@@ -8,7 +8,14 @@
               <el-input v-model="dicType.search.typeName" placeholder="父级字典"></el-input>
             </el-col>
             <el-col :span="12">
-              <el-button @click="onAddDicType">添加</el-button><el-button type="primary" @click="handleGetRows">查询</el-button>
+              <el-button type="primary" @click="handleGetRows">查询</el-button>
+            </el-col>
+          </el-row>
+          <el-row :gutter="10">
+            <el-col :span="24">
+              <el-button @click="onAddDicType">添加</el-button>
+              <el-button v-bind:disabled="dicTypeDetailAddFlag" @click="onEditDicType">修改</el-button>
+              <el-button type="danger" @click="handleGetRows">删除</el-button>
             </el-col>
           </el-row>
         </el-card>
@@ -17,8 +24,10 @@
       <el-col :span="16">
         <el-card>
           <el-button v-bind:disabled="dicTypeDetailAddFlag" @click="onAddDicTypeDetail">添加</el-button>
+          <el-button v-bind:disabled="dicTypeDetailEditFlag" @click="onEditDicTypeDetail">修改</el-button>
+          <el-button type="danger" @click="handleGetRows">删除</el-button>
         </el-card>
-        <ag-table ref="dicTypeDetailTable" :url="dicTypeDetail.table.url" :columnDefs="dicTypeDetail.table.columnDefs" ></ag-table>
+        <ag-table ref="dicTypeDetailTable" :url="dicTypeDetail.table.url" :columnDefs="dicTypeDetail.table.columnDefs" rowSelection="single" :selected="dicTypeDetail.table.selected" @onSelect="onDicTypeDetailSelect"></ag-table>
       </el-col>
     </el-row>
     <el-dialog :visible.sync="dicType.visible.dicTypeAdd"  close-on-click-modal close-on-press-escape	right width="30%">
@@ -31,7 +40,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <common-button type="primary" @click="onSubmitDicType">保存</common-button>
+        <common-button type="primary" :loading="dicType.loading.addSubmitLoading" @click="onSubmitDicType">保存</common-button>
         <common-button type="primary" @click="dicType.visible.dicTypeAdd = false">取消</common-button>
       </span>
     </el-dialog>
@@ -93,12 +102,14 @@
     data () {
       return {
         dicType: {
+          loading: {
+            addSubmitLoading: false
+          },
           search: {
             dicName: ''
           },
           entity: {
-            typeCode: '',
-            typeName: ''
+            id: '', typeCode: '', typeName: ''
           },
           rules: {
             typeCode: [
@@ -127,7 +138,7 @@
         },
         dicTypeDetail: {
           entity: {
-            typeCode: '', itemCode: '', itemName: '', attr1: '', attr2: '', attr3: '', attr4: '', attr5: '', attr6: ''
+            id: '', typeId: '', itemCode: '', itemName: '', attr1: '', attr2: '', attr3: '', attr4: '', attr5: '', attr6: ''
           },
           rules: {
             itemCode: [
@@ -142,6 +153,7 @@
           },
           table: {
             url: '/system/sysnIfobaseDetail/getList',
+            selected: [],
             columnDefs: [
               {headerName: '序号', pinned: 'left',
                 cellRenderer: (params) => Number(params.node.id) + 1,
@@ -168,6 +180,13 @@
         } else {
           return true
         }
+      },
+      dicTypeDetailEditFlag () {
+        if (this.dicTypeDetail.table.selected.length === 1) {
+          return false
+        } else {
+          return true
+        }
       }
     },
     methods: {
@@ -177,26 +196,36 @@
           this.$refs.dicTypeForm.resetFields()
         })
       },
+      onEditDicType () {
+        const { id, typeCode, typeName } = this.dicType.table.selected[0]
+        console.log('11', this.dicType.table.selected)
+        this.dicType.entity = { id, typeCode, typeName }
+        this.dicType.visible.dicTypeAdd = true
+      },
       onSubmitDicType () {
         this.$refs.dicTypeForm.validate( valid => {
           if (!valid) return
-          const { typeCode, typeName } = this.dicType.entity
+          this.dicType.loading.addSubmitLoading = true
+          const { id, typeCode, typeName } = this.dicType.entity
           this.$request({
             url: '/system/sysInfobaseType/add',
             method: 'post',
-            data : { typeCode, typeName }
+            data : { id, typeCode, typeName }
           }).then( res => {
+            this.dicType.loading.addSubmitLoading = false
             this.dicType.visible.dicTypeAdd = false
             this.$refs.dicTypeTable.fetchHandler()
+          }).catch( () => {
+            this.dicType.loading.addSubmitLoading = false
           })
         })
       },
       onDicTypeSelect(selected, grid) {
         this.dicType.table.selected = selected
         if (selected.length > 0) {
-          const { typeCode } = selected[0]
-          this.dicTypeDetail.entity.typeCode = typeCode
-          this.$refs.dicTypeDetailTable.fetchHandler({typeCode})
+          const { id } = selected[0]
+          this.dicTypeDetail.entity.typeId = id
+          this.$refs.dicTypeDetailTable.fetchHandler({typeId: id})
         }
       },
       onAddDicTypeDetail () {
@@ -204,6 +233,17 @@
         this.$nextTick( ()=> {
           this.$refs.dicTypeDetailForm.resetFields()
         })
+      },
+      onEditDicTypeDetail () {
+        this.dicTypeDetail.visible.dicTypeDetailAdd = true
+        this.$nextTick( ()=> {
+          this.$refs.dicTypeDetailForm.resetFields()
+          const { id, typeId, itemCode, itemName, attr1, attr2, attr3, attr4, attr5, attr6 } = this.dicTypeDetail.table.selected[0]
+          this.dicTypeDetail.entity = { id, typeId, itemCode, itemName, attr1, attr2, attr3, attr4, attr5, attr6 }
+        })
+      },
+      onDicTypeDetailSelect (selected, grid) {
+        this.dicTypeDetail.table.selected = selected
       },
       onSubmitDicTypeDetail () {
         this.$refs.dicTypeDetailForm.validate( valid => {
@@ -215,7 +255,7 @@
             data
           }).then( res => {
             this.dicTypeDetail.visible.dicTypeDetailAdd = false
-            this.$refs.dicTypeDetailTable.fetchHandler({typeCode: this.dicTypeDetail.entity.typeCode})
+            this.$refs.dicTypeDetailTable.fetchHandler({typeId: this.dicTypeDetail.entity.typeId})
           })
         })
       },
@@ -226,6 +266,11 @@
   }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+  .el-row {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 </style>

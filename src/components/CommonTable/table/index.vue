@@ -267,7 +267,7 @@
             requestObject = request({ url: reqInfo.url, params: reqInfo.params })
           } else {
             const data = reqInfo.params;
-            requestObject = request({ url: reqInfo.url, data })
+            requestObject = request({ url: reqInfo.url, method: this.method, data })
           }
         }
         requestObject.then(response => {

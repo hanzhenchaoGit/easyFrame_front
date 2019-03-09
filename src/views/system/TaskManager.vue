@@ -6,11 +6,11 @@
           <el-form-item prop="id" label="id">
             <el-input v-model="taskForm.id" disabled></el-input>
           </el-form-item>
-          <el-form-item prop="name" label="作业名" required>
-            <el-input v-model="taskForm.name"></el-input>
+          <el-form-item prop="taskName" label="作业名" required>
+            <el-input v-model="taskForm.taskName"></el-input>
           </el-form-item>
-          <el-form-item prop="group" label="作业组" required>
-            <el-input v-model="taskForm.group"></el-input>
+          <el-form-item prop="taskGroup" label="作业组" required>
+            <el-input v-model="taskForm.taskGroup"></el-input>
           </el-form-item>
           <el-form-item prop="description" label="作业描述" required>
             <el-input v-model="taskForm.description"></el-input>
@@ -35,12 +35,13 @@
         </el-form>
       </el-dialog>
       <el-dialog title="作业日志" :visible.sync="window.logWindow" width="50%"  close-on-click-modal close-on-press-escape>
-        <common-table ref="logTable" :url="table.log.url" :columns="table.log.columns"></common-table>
+        <common-table ref="logTable" :url="table.log.url" method="post" :columns="table.log.columns"></common-table>
       </el-dialog>
 
       <common-table
         ref="table"
         :url="table.task.url"
+        method="post"
         :columns="table.task.columns"
         fit
         autoLoad
@@ -84,8 +85,8 @@
        addWindow: false,
        taskForm: {
          id: null,
-         name: '',
-         group: '',
+         taskName: '',
+         taskGroup: '',
          description: '',
          corn: '',
          jobClass: '',
@@ -110,8 +111,8 @@
              ]
            },
            columns: [{ colType: 'selection' },
-             { prop: 'name', label: '作业名称' },
-             { prop: 'group', label: '作业组', width: 120 },
+             { prop: 'taskName', label: '作业名称' },
+             { prop: 'taskGroup', label: '作业组', width: 120 },
              { prop: 'description', label: '描述', showOverflowTooltip: true },
              { prop: 'corn', label: 'corn表达式', width: 120 },
              { prop: 'jobClass', label: '作业类', showOverflowTooltip: true },
