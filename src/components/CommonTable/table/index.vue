@@ -118,13 +118,13 @@
     },
     props,
     data() {
-      const _this = this;
+      const _this = this
       return {
         Vue,
         pagination: {
           currentPage: 1,
           pageSize: (() => {
-            const { pageSizes } = _this;
+            const { pageSizes } = _this
             if (pageSizes.length > 0) {
               return pageSizes[0]
             }
@@ -146,11 +146,11 @@
     },
     methods: {
       handleSizeChange(size) {
-        this.pagination.pageSize = size;
+        this.pagination.pageSize = size
         this.dataChangeHandler()
       },
       handleCurrentChange(currentPage) {
-        this.pagination.currentPage = currentPage;
+        this.pagination.currentPage = currentPage
         this.dataChangeHandler()
       },
       // 添加是否导出
@@ -168,7 +168,7 @@
         return this.selectData
       },
       dataChangeHandler() {
-        const { type } = this;
+        const { type } = this
         if (type === 'local') {
           this.dataFilterHandler(arguments[0])
         } else if (type === 'remote') {
@@ -176,25 +176,25 @@
         }
       },
       dataFilter(data) {
-        const { currentPage, pageSize } = this.pagination;
+        const { currentPage, pageSize } = this.pagination
         return data.filter((v, i) => {
           return i >= (currentPage - 1) * pageSize && i < currentPage * pageSize
         })
       },
       dataFilterHandler(formParams) {
-        const { cacheLocalData, params } = this;
-        const mergeParams = Object.assign(params, formParams);
+        const { cacheLocalData, params } = this
+        const mergeParams = Object.assign(params, formParams)
         const validParamKeys = Object.keys(mergeParams).filter(v => {
           return mergeParams[v] !== undefined && mergeParams[v] !== ''
-        });
-        const searchForm = this.$refs['searchForm'];
-        let paramFuzzy;
+        })
+        const searchForm = this.$refs['searchForm']
+        let paramFuzzy
         if (searchForm) {
           paramFuzzy = searchForm.getParamFuzzy()
         }
         if (validParamKeys.length > 0) {
           const validData = cacheLocalData.filter(v => {
-            const valids = [];
+            const valids = []
             validParamKeys.forEach(vv => {
               if (typeof v[vv] === 'number') {
                 valids.push(
@@ -206,15 +206,15 @@
                   paramFuzzy && paramFuzzy[vv] ? (v[vv].indexOf(mergeParams[vv]) !== -1) : (v[vv] === mergeParams[vv])
                 )
               }
-            });
+            })
             return valids.every(vvv => {
               return vvv
             })
-          });
-          this.tableData = this.dataFilter(validData);
+          })
+          this.tableData = this.dataFilter(validData)
           this.total = validData.length
         } else {
-          this.total = cacheLocalData.length;
+          this.total = cacheLocalData.length
           this.tableData = this.dataFilter(cacheLocalData)
         }
       },
@@ -222,10 +222,10 @@
         const { fetch, url,
           pageIndexKey, pageSizeKey,
           showPagination,
-          pagination } = this;
-        let { params } = this;
-        const { method } = this;
-        params = JSON.parse(JSON.stringify(Object.assign(params, formParams)));
+          pagination } = this
+        let { params } = this
+        const { method } = this
+        params = JSON.parse(JSON.stringify(Object.assign(params, formParams)))
         if (showPagination) {
           params = Object.assign(params, {
             [pageIndexKey]: pagination.currentPage,
@@ -241,14 +241,14 @@
       },
       // 导出Excel
       doExport() {
-        const reqInfo = this.$refs.searchForm.submitHandler(true, true);
-        const { url, params } = reqInfo;
+        const reqInfo = this.$refs.searchForm.submitHandler(true, true)
+        const { url, params } = reqInfo
 
-        let paramsStr = ''; // 99999999
+        let paramsStr = '' // 99999999
         for (const key in params) {
           paramsStr += key + '=' + params[key] + '&'
         }
-        paramsStr += 'exportType=' + this.exportCurrent;
+        paramsStr += 'exportType=' + this.exportCurrent
         if (url.indexOf('uuid=') > -1) {
           window.open(this.baseUrl + url + '&' + paramsStr)
         } else {
@@ -256,22 +256,22 @@
         }
       },
       fetchHandler(formParams = {}) {
-        this.loading = true;
-        const reqInfo = this.getReqInfo(formParams);
-        let requestObject = null;
+        this.loading = true
+        const reqInfo = this.getReqInfo(formParams)
+        let requestObject = null
         if (reqInfo.fetch) {
           requestObject = fetch(reqInfo.params)
         } else {
-          reqInfo.method = reqInfo.method.toLowerCase();
+          reqInfo.method = reqInfo.method.toLowerCase()
           if (reqInfo.method === 'get') {
             requestObject = request({ url: reqInfo.url, params: reqInfo.params })
           } else {
-            const data = reqInfo.params;
+            const data = reqInfo.params
             requestObject = request({ url: reqInfo.url, method: this.method, data })
           }
         }
         requestObject.then(response => {
-          const result = response.data;
+          const result = response.data
           // const _this = this
           // if (this.showPagination && result.items.length > 0) {
           //   result.items.map(res => {
@@ -334,7 +334,7 @@
 
           // 查询结束后清空 table内的params避免 重置外置表单时 之前的查询参数依然存在
           // this.$set(this, 'params', {})
-          this.total = result.total;
+          this.total = result.total
           this.loading = false
         }).catch(() => {
           this.loading = false
@@ -347,15 +347,15 @@
         this.$emit(event, ...Array.from(arguments))
       },
       loadLocalData(data) {
-        const { autoLoad } = this;
+        const { autoLoad } = this
         if (!data) {
-          this.showPagination = false;
+          this.showPagination = false
           return false
         }
-        const cacheData = JSON.parse(JSON.stringify(data));
-        this.cacheLocalData = cacheData;
+        const cacheData = JSON.parse(JSON.stringify(data))
+        this.cacheLocalData = cacheData
         if (autoLoad) {
-          this.tableData = this.dataFilter(cacheData);
+          this.tableData = this.dataFilter(cacheData)
           this.total = cacheData.length
         }
       },
@@ -365,8 +365,8 @@
     },
     mounted() {
       // event: expand changed to `expand-change` in Element v2.x
-      this.$refs['table'].$on('expand', (row, expanded) => this.emitEventHandler('expand', row, expanded));
-      const { type, autoLoad, data, formOptions, params } = this;
+      this.$refs['table'].$on('expand', (row, expanded) => this.emitEventHandler('expand', row, expanded))
+      const { type, autoLoad, data, formOptions, params } = this
       if (type === 'remote' && autoLoad) {
         if (formOptions) {
           this.$refs['searchForm'].getParams((error, formParams) => {

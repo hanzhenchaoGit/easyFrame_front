@@ -1,28 +1,5 @@
 <template>
   <div>
-    <el-dialog :visible.sync="window" width="36%"  close-on-click-modal close-on-press-escape	>
-      <el-form inline  ref="organization" :model="organization" label-width="120px"  label-position="left">
-          <el-form-item prop="id" label="id">
-              <el-input v-model="organization.id" disabled></el-input>
-          </el-form-item>
-          <el-form-item prop="pid" label="上级部门" required>
-              <el-input v-model="organization.pid" disabled></el-input>
-          </el-form-item>
-          <el-form-item prop="label" label="部门名称" required>
-              <el-input v-model="organization.label"></el-input>
-          </el-form-item>
-          <el-form-item prop="note" label="部门说明" required>
-              <el-input v-model="organization.note"></el-input>
-          </el-form-item>
-          <el-form-item prop="order" label="顺序">
-              <el-input v-model="organization.order"></el-input>
-          </el-form-item>
-          <el-form-item>
-              <common-button type="primary" @click="saveOrg()">保存</common-button>
-              <common-button @click="window=false">取消</common-button>
-          </el-form-item>
-      </el-form>
-    </el-dialog>
     <el-dialog :visible.sync="addWindow" width="45%"  close-on-click-modal close-on-press-escape	>
       <el-form inline  ref="form" :model="userForm" label-width="90px"  label-position="right" v-loading="loading.userFormLoading">
         <el-form-item prop="id" label="id">
@@ -87,22 +64,6 @@
       </el-form>
     </el-dialog>
 
-    <el-dialog :visible.sync="departWindow"  width="45%"  close-on-click-modal close-on-press-escape	>
-      <el-card shadow="always" class="cardcontainer" style="height:45vh">
-          <el-tree style="font-size:14px;"
-            :data="data"
-            ref="departTree"
-            show-checkbox
-            node-key="id"
-            highlight-current
-            :expand-on-click-node="false">
-          </el-tree>
-        </el-card>
-        <div slot='footer'>
-          <common-button type="primary" @click="saveUserDepart">保存</common-button>
-          <common-button @click="departWindow=false">取消</common-button>
-        </div>
-    </el-dialog>
     <el-dialog title="用户角色" :visible.sync="rolesWindow" width="66%"  close-on-click-modal close-on-press-escape>
       <el-checkbox-group
         v-model="userRoles" >
@@ -114,37 +75,8 @@
       </div>
     </el-dialog>
     <el-row :gutter="8">
-      <el-col :span="8">
-        <el-card shadow="always" class="cardcontainer" v-loading="loading.orgLoading">
-          <el-tree style="font-size:14px;"
-            :data="data"
-            ref="tree"
-            node-key="id"
-            @node-click="treeNodeClick"
-            highlight-currentight-current
-            :expand-on-click-node="false"
-            check-strictly
-            :render-content="renderContent">
-          </el-tree>
-        </el-card>
-      </el-col>
-      <el-col :span="16">
-        <common-table ref="table" height="72vh" :url="url" :columns="columns" @select-all="handlerCheck" @select="handlerCheck" fit>
-          <template slot-scope="scope" slot="topbutton">
-            <common-button  type="primary" @click="handleAdd('form','addWindow')" v-has permission="add">添加用户</common-button>
-            <common-button  type="primary" @click="disableUsers" v-has permission="disableuser">禁用用户</common-button>
-            <common-button  type="primary" @click="resetPassword" v-has permission="resetpwd">重置密码</common-button>
-          </template>
-          <template slot-scope="scope" slot="edit">
-              <common-button
-                 v-has permission="edit"
-                @click="handleEdit(scope.$index, scope.row)">修改</common-button>
-              <common-button  type="danger" slot="reference" @click="handleEditUserRole(scope.row)" v-has permission="editrole">角色分配</common-button>
-          </template>
-          <template slot-scope="scope" slot="roleName">
-              <el-tag :key="role.id" v-for="role in scope.row.roles">{{role.roleName}}</el-tag>
-          </template>
-        </common-table>
+      <el-col :span="24">
+        <ag-table :url="url" :columnDefs="columns"></ag-table>
       </el-col>
     </el-row>
     </div>
@@ -207,14 +139,21 @@ export default {
       roles: [],
       url: '/user/getSysUserByOrgPager',
       columns: [
-        { colType: 'selection' },
-        { prop: 'userName', label: '用户名', width: 130 },
-        { prop: 'name', label: '姓名', width: 100 },
-        { prop: 'dutyName', label: '职务', width: 120 },
-        { prop: 'group', label: '业务组', width: 100 },
-        { prop: 'mobile', label: '手机', width: 140 },
-        { prop: 'userEnable', label: '是否可用' },
-        { label: '操作', slotName: 'edit', width: 200 }
+        { headerName: '序号', pinned: 'left',
+          cellRenderer: (params) => Number(params.node.id) + 1,
+          headerCheckboxSelection: true,
+          headerCheckboxSelectionFilteredOnly: true,
+          checkboxSelection: true },
+        { field: 'userName', headerName: '用户名', width: 130 },
+        { field: 'relName', headerName: '姓名', width: 100 },
+        { field: 'dutyName', headerName: '职务', width: 120 },
+        { field: 'mobile', headerName: '手机', width: 140 },
+        { field: 'userEnable', headerName: '是否可用',
+          cellRenderer(params) {
+            console.log(params)
+            if (params.value === '1') { return '是' } else { return '否' }
+          }
+        }
       ],
       checkNodes: [],
       data: [

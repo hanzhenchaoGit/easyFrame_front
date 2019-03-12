@@ -48,7 +48,9 @@
         total: 0,
         loading: false,
         data: this.rowData,
-        selectedRows: []
+        selectedRows: [],
+        gridApi: null,
+        columnApi: null
       }
     },
     mounted() {
@@ -58,7 +60,7 @@
     },
     methods: {
       // 表格创建完成后执行
-      onGridReady (params) {
+      onGridReady(params) {
         // 获取gridApi
         this.gridApi = params.api
         this.columnApi = params.columnApi
@@ -66,7 +68,7 @@
         this.gridApi.sizeColumnsToFit()
         this.$emit('onGridReady', params)
       },
-      //获取ag-grid对象
+      // 获取ag-grid对象
       getGrid() {
         return this.$refs.grid
       },
@@ -77,7 +79,7 @@
       onSelectionChanged(grid) {
         const selectedRows = grid.api.getSelectedRows()
         this.selectedRows = selectedRows
-        this.$emit('onSelect', selectedRows ,grid)
+        this.$emit('onSelect', selectedRows, grid)
       },
       cellClicked(a) {
         console.log(a)
@@ -91,24 +93,25 @@
         this.fetchHandler()
       },
       fetchHandler(param = {}) {
-        this.loading = true;
+        this.loading = true
         const data = Object.assign({}, param, {
           pageNumber: this.pageNumber, pageSize: this.pageSize
         })
-        return this.$request({ url: this.url,method: 'post', data })
-        .then(response => {
-          const result = response.data;
-          if (this.showPagination) {
-            this.data = result.items
-          } else {
-            this.data = result
-          }
-          this.total = result.total || result.length;
-          this.loading = false
-        }).catch(() => {
-          this.loading = false
-        })
-      },
+        this.$request({ url: this.url, method: 'post', data })
+          .then(response => {
+            const result = response.data
+            if (this.showPagination) {
+              this.data = result.items
+            } else {
+              this.data = result
+            }
+            this.total = result.total || result.length
+            this.loading = false
+            this.$emit('loadDone', response)
+          }).catch(() => {
+            this.loading = false
+          })
+      }
     }
   }
 </script>

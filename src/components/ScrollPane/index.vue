@@ -7,7 +7,7 @@
 </template>
 
 <script>
-const padding = 15; // tag's padding
+const padding = 15 // tag's padding
 
 export default {
   name: 'scrollPane',
@@ -18,11 +18,11 @@ export default {
   },
   methods: {
     handleScroll(e) {
-      const eventDelta = e.wheelDelta || -e.deltaY * 3;
-      const $container = this.$refs.scrollContainer;
-      const $containerWidth = $container.offsetWidth;
-      const $wrapper = this.$refs.scrollWrapper;
-      const $wrapperWidth = $wrapper.offsetWidth;
+      const eventDelta = e.wheelDelta || -e.deltaY * 3
+      const $container = this.$refs.scrollContainer
+      const $containerWidth = $container.offsetWidth
+      const $wrapper = this.$refs.scrollWrapper
+      const $wrapperWidth = $wrapper.offsetWidth
 
       if (eventDelta > 0) {
         this.left = Math.min(0, this.left + eventDelta)
@@ -39,10 +39,10 @@ export default {
       }
     },
     moveToTarget($target) {
-      const $container = this.$refs.scrollContainer;
-      const $containerWidth = $container.offsetWidth;
-      const $targetLeft = $target.offsetLeft;
-      const $targetWidth = $target.offsetWidth;
+      const $container = this.$refs.scrollContainer
+      const $containerWidth = $container.offsetWidth
+      const $targetLeft = $target.offsetLeft
+      const $targetWidth = $target.offsetWidth
 
       if ($targetLeft < -this.left) {
         // tag in the left

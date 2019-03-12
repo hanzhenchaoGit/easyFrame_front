@@ -99,7 +99,7 @@
 
 <script>
   export default {
-    data () {
+    data() {
       return {
         dicType: {
           loading: {
@@ -113,11 +113,11 @@
           },
           rules: {
             typeCode: [
-              { required: true, message: '请输入字典编码', trigger: 'change' },
+              { required: true, message: '请输入字典编码', trigger: 'change' }
             ],
             typeName: [
               { required: true, message: '请输入字典名称', trigger: 'change' }
-            ],
+            ]
           },
           visible: {
             dicTypeAdd: false
@@ -126,13 +126,13 @@
             selected: [],
             url: '/system/sysInfobaseType/getList',
             columnDefs: [
-              {headerName: '序号', pinned: 'left',
+              { headerName: '序号', pinned: 'left',
                 cellRenderer: (params) => Number(params.node.id) + 1,
                 headerCheckboxSelection: true,
                 headerCheckboxSelectionFilteredOnly: true,
-                checkboxSelection: true},
-              {headerName: '字典名称', field: 'typeName'},
-              {headerName: '字典编码', field: 'typeCode'}
+                checkboxSelection: true },
+              { headerName: '字典名称', field: 'typeName' },
+              { headerName: '字典编码', field: 'typeCode' }
             ]
           }
         },
@@ -142,11 +142,11 @@
           },
           rules: {
             itemCode: [
-              { required: true, message: '请输入字典编码', trigger: 'change' },
+              { required: true, message: '请输入字典编码', trigger: 'change' }
             ],
             itemName: [
               { required: true, message: '请输入字典名称', trigger: 'change' }
-            ],
+            ]
           },
           visible: {
             dicTypeDetailAdd: false
@@ -155,33 +155,33 @@
             url: '/system/sysnIfobaseDetail/getList',
             selected: [],
             columnDefs: [
-              {headerName: '序号', pinned: 'left',
+              { headerName: '序号', pinned: 'left',
                 cellRenderer: (params) => Number(params.node.id) + 1,
                 headerCheckboxSelection: true,
                 headerCheckboxSelectionFilteredOnly: true,
-                checkboxSelection: true},
-              {headerName: '字典名称', field: 'itemName'},
-              {headerName: '字典编码', field: 'itemCode'},
-              {headerName: '属性1', field: 'attr1'},
-              {headerName: '属性2', field: 'attr2'},
-              {headerName: '属性3', field: 'attr3'},
-              {headerName: '属性4', field: 'attr4'},
-              {headerName: '属性5', field: 'attr5'},
-              {headerName: '属性6', field: 'attr6'}
+                checkboxSelection: true },
+              { headerName: '字典名称', field: 'itemName' },
+              { headerName: '字典编码', field: 'itemCode' },
+              { headerName: '属性1', field: 'attr1' },
+              { headerName: '属性2', field: 'attr2' },
+              { headerName: '属性3', field: 'attr3' },
+              { headerName: '属性4', field: 'attr4' },
+              { headerName: '属性5', field: 'attr5' },
+              { headerName: '属性6', field: 'attr6' }
             ]
           }
         }
       }
     },
     computed: {
-      dicTypeDetailAddFlag () {
+      dicTypeDetailAddFlag() {
         if (this.dicType.table.selected.length === 1) {
           return false
         } else {
           return true
         }
       },
-      dicTypeDetailEditFlag () {
+      dicTypeDetailEditFlag() {
         if (this.dicTypeDetail.table.selected.length === 1) {
           return false
         } else {
@@ -190,32 +190,32 @@
       }
     },
     methods: {
-      onAddDicType () {
+      onAddDicType() {
         this.dicType.visible.dicTypeAdd = true
-        this.$nextTick( ()=> {
+        this.$nextTick(() => {
           this.$refs.dicTypeForm.resetFields()
         })
       },
-      onEditDicType () {
+      onEditDicType() {
         const { id, typeCode, typeName } = this.dicType.table.selected[0]
         console.log('11', this.dicType.table.selected)
         this.dicType.entity = { id, typeCode, typeName }
         this.dicType.visible.dicTypeAdd = true
       },
-      onSubmitDicType () {
-        this.$refs.dicTypeForm.validate( valid => {
+      onSubmitDicType() {
+        this.$refs.dicTypeForm.validate(valid => {
           if (!valid) return
           this.dicType.loading.addSubmitLoading = true
           const { id, typeCode, typeName } = this.dicType.entity
           this.$request({
             url: '/system/sysInfobaseType/add',
             method: 'post',
-            data : { id, typeCode, typeName }
-          }).then( res => {
+            data: { id, typeCode, typeName }
+          }).then(res => {
             this.dicType.loading.addSubmitLoading = false
             this.dicType.visible.dicTypeAdd = false
             this.$refs.dicTypeTable.fetchHandler()
-          }).catch( () => {
+          }).catch(() => {
             this.dicType.loading.addSubmitLoading = false
           })
         })
@@ -225,41 +225,41 @@
         if (selected.length > 0) {
           const { id } = selected[0]
           this.dicTypeDetail.entity.typeId = id
-          this.$refs.dicTypeDetailTable.fetchHandler({typeId: id})
+          this.$refs.dicTypeDetailTable.fetchHandler({ typeId: id })
         }
       },
-      onAddDicTypeDetail () {
+      onAddDicTypeDetail() {
         this.dicTypeDetail.visible.dicTypeDetailAdd = true
-        this.$nextTick( ()=> {
+        this.$nextTick(() => {
           this.$refs.dicTypeDetailForm.resetFields()
         })
       },
-      onEditDicTypeDetail () {
+      onEditDicTypeDetail() {
         this.dicTypeDetail.visible.dicTypeDetailAdd = true
-        this.$nextTick( ()=> {
+        this.$nextTick(() => {
           this.$refs.dicTypeDetailForm.resetFields()
           const { id, typeId, itemCode, itemName, attr1, attr2, attr3, attr4, attr5, attr6 } = this.dicTypeDetail.table.selected[0]
           this.dicTypeDetail.entity = { id, typeId, itemCode, itemName, attr1, attr2, attr3, attr4, attr5, attr6 }
         })
       },
-      onDicTypeDetailSelect (selected, grid) {
+      onDicTypeDetailSelect(selected, grid) {
         this.dicTypeDetail.table.selected = selected
       },
-      onSubmitDicTypeDetail () {
-        this.$refs.dicTypeDetailForm.validate( valid => {
+      onSubmitDicTypeDetail() {
+        this.$refs.dicTypeDetailForm.validate(valid => {
           if (!valid) return
           const data = this.dicTypeDetail.entity
           this.$request({
             url: '/system/sysnIfobaseDetail/add',
             method: 'post',
             data
-          }).then( res => {
+          }).then(res => {
             this.dicTypeDetail.visible.dicTypeDetailAdd = false
-            this.$refs.dicTypeDetailTable.fetchHandler({typeId: this.dicTypeDetail.entity.typeId})
+            this.$refs.dicTypeDetailTable.fetchHandler({ typeId: this.dicTypeDetail.entity.typeId })
           })
         })
       },
-      handleGetRows () {
+      handleGetRows() {
         this.$refs.dicTypeTable.fetchHandler({ typeName: this.dicType.search.typeName })
       }
     }

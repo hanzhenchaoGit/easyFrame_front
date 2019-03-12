@@ -54,7 +54,7 @@ const props = {
     type: String,
     default: 'get',
     validator: value => {
-      const methodTypes = ['get', 'post', 'put', 'delete'];
+      const methodTypes = ['get', 'post', 'put', 'delete']
       return methodTypes.indexOf(value.toLowerCase()) !== -1
     }
   },
@@ -92,8 +92,8 @@ const props = {
     type: String,
     default: 'remote',
     validator(value) {
-      const types = ['remote', 'local'];
-      const validType = types.indexOf(value) !== -1;
+      const types = ['remote', 'local']
+      const validType = types.indexOf(value) !== -1
       if (!validType) {
         throw new Error(`Invalid type of '${value}', please set one type of 'remote' or 'local'.`)
       }
@@ -193,10 +193,10 @@ const props = {
     type: String,
     default: 'pageSize'
   }
-};
+}
 
 Object.keys(formProps).forEach(v => {
   props.formOptions[v] = formProps[v]
-});
+})
 
 export default props

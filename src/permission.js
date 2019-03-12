@@ -4,7 +4,6 @@ import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css'// progress bar style
 import { getToken } from '@/utils/auth'
-import request from '@/utils/request'
 NProgress.configure({ showSpinner: false })// NProgress Configuration
 
 const whiteList = ['/login', '/authredirect']// no redirect whitelist

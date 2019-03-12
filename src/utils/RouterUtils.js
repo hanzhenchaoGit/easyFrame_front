@@ -2,6 +2,9 @@ export function getRouters(routers) {
   const menus = []
   for (const i in routers) {
     let routerRes = {}
+    if (routers[i].mtype === 'button') {
+      return
+    }
     if (routers[i].children.length > 0) {
       routerRes = {
         path: routers[i].path,

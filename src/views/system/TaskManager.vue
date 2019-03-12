@@ -152,7 +152,7 @@
        this.window.logWindow = true
        this.$nextTick(() => {
          this.$refs.logTable.fetchHandler({
-           jobKey: row.name
+           jkey: row.name
          })
        })
      },

@@ -45,7 +45,7 @@
 
 <script>
   import props from './props'
-    import Vue from 'vue'
+  import Vue from 'vue'
   export default {
     name: 'c-column',
     props,

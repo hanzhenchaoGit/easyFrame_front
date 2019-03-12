@@ -61,13 +61,6 @@
     methods: {
       handlerClick(ev) {
         if (this.$el.innerText !== '登录') {
-          const data = {
-            type: '按钮点击',
-            operateName: this.$el.innerText,
-            routerName: this.$root._route.meta.title,
-            routerPath: this.$root._route.path
-          }
-
           // this.$request({
           //   url: 'user/addSysUserFrontlog',
           //   method: 'post',
