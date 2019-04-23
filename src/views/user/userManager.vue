@@ -76,7 +76,7 @@
     </el-dialog>
     <el-row :gutter="8">
       <el-col :span="24">
-        <ag-table :url="url" :columnDefs="columns"></ag-table>
+        <common-table :url="url" method="post" :columns="columns" :formOptions="formOptions"></common-table>
       </el-col>
     </el-row>
     </div>
@@ -139,22 +139,15 @@ export default {
       roles: [],
       url: '/user/getSysUserByOrgPager',
       columns: [
-        { headerName: '序号', pinned: 'left',
-          cellRenderer: (params) => Number(params.node.id) + 1,
-          headerCheckboxSelection: true,
-          headerCheckboxSelectionFilteredOnly: true,
-          checkboxSelection: true },
-        { field: 'userName', headerName: '用户名', width: 130 },
-        { field: 'relName', headerName: '姓名', width: 100 },
-        { field: 'dutyName', headerName: '职务', width: 120 },
-        { field: 'mobile', headerName: '手机', width: 140 },
-        { field: 'userEnable', headerName: '是否可用',
-          cellRenderer(params) {
-            console.log(params)
-            if (params.value === '1') { return '是' } else { return '否' }
-          }
-        }
+        { prop: 'userName', label: '用户名', width: 130 },
+        { prop: 'relName', label: '姓名', width: 100 },
+        { prop: 'dutyName', label: '职务', width: 120 },
+        { prop: 'mobile', label: '手机', width: 140 },
+        { prop: 'userEnable', label: '是否可用' }
       ],
+      formOptions: {
+        showSearchBtn: true
+      },
       checkNodes: [],
       data: [
         {

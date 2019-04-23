@@ -35,60 +35,74 @@
         </el-form-item>
       </el-form>
       </el-dialog>
-      <el-dialog :visible.sync="addWindow" width="60%"  close-on-click-modal close-on-press-escape	>
-        <el-form inline  ref="form" :model="codeForm" label-width="120px"  label-position="left">
-          <el-form-item prop="id" label="id">
-            <el-input v-model="codeForm.id" disabled></el-input>
-          </el-form-item>
-          <el-form-item prop="module" label="模块标识" required>
-            <el-input v-model="codeForm.module"></el-input>
-          </el-form-item>
-          <el-form-item prop="tableName" label="表名" required>
-            <common-select v-model="codeForm.tableName" :url="tableNameUrl" filterable
-                placeholder="请选择表名">
-              <el-option
-                v-for="table in tables"
-                :key="table.table_name"
-                :label="table.table_name"
-                :value="table.table_name">
-              </el-option>
-            </common-select>
-          </el-form-item>
-          <el-form-item prop="genType" label="代码类型" required>
-            <el-tooltip placement="top">
-              <div slot="content">
-                增&改: controller中带有增加和更改记录的请求<br>
-                删: controller中带有删除记录的请求<br>
-                分页列表: controller中带有分页查询的请求<br>
-                不分列表: controller中带有不分页查询列表的请求<br>
-              </div>
-              <el-select v-model="codeForm.genType" multiple placeholder="请选择代码类型">
-                <el-option key="addAndUpdate" label="增&改" value="addAndUpdate"> </el-option>
-                <el-option key="del" label="删" value="del"> </el-option>
-                <el-option key="selectPager" label="分页列表" value="selectPager"> </el-option>
-                <el-option key="selectList" label="不分列表" value="selectList"> </el-option>
-              </el-select>
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item prop="author" label="作者" required>
-            <el-input v-model="codeForm.author"></el-input>
-          </el-form-item>
-          <el-form-item prop="outpath" label="代码输出路径" required>
-            <el-input v-model="codeForm.outpath"></el-input>
-          </el-form-item>
-          <el-form-item prop="datasourceId" label="数据源Id" required>
-            <el-select v-model="codeForm.datasourceId" placeholder="请选择">
-              <el-option
-                v-for="item in dataSources"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                <span >{{ item.name }}</span>
-                <span >{{ item.url }}</span>
-                <span >{{ item.username }}:{{ item.password }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
+      <el-dialog :visible.sync="addWindow" width="40%"  close-on-click-modal close-on-press-escape	>
+        <el-form ref="form" :model="codeForm" label-width="80px"  label-position="left">
+          <el-row>
+            <el-col :span="12">
+              <el-form-item prop="id" label="id">
+                <el-input v-model="codeForm.id" disabled></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item prop="module" label="模块标识" required>
+                <el-input v-model="codeForm.module"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item prop="tableName" label="表名" required>
+                <el-input v-model="codeForm.tableName"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item prop="outpath" label="输出路径" required>
+                <el-input v-model="codeForm.outpath"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item prop="author" label="作者" required>
+                <el-input v-model="codeForm.author"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item prop="datasourceId" label="数据源Id" required>
+                <common-select v-model="codeForm.datasourceId" placeholder="请选择">
+                  <el-option
+                    v-for="item in dataSources"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                    <span >{{ item.name }}</span>
+                    <span >{{ item.url }}</span>
+                    <span >{{ item.username }}:{{ item.password }}</span>
+                  </el-option>
+                </common-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              <el-form-item prop="genType" label="代码类型" required>
+                <el-tooltip placement="top">
+                  <div slot="content">
+                    增&改: controller中带有增加和更改记录的请求<br>
+                    删: controller中带有删除记录的请求<br>
+                    分页列表: controller中带有分页查询的请求<br>
+                    不分列表: controller中带有不分页查询列表的请求<br>
+                  </div>
+                  <common-select v-model="codeForm.genType" multiple placeholder="请选择代码类型">
+                    <el-option key="addAndUpdate" label="增&改" value="addAndUpdate"> </el-option>
+                    <el-option key="del" label="删" value="del"> </el-option>
+                    <el-option key="selectPager" label="分页列表" value="selectPager"> </el-option>
+                    <el-option key="selectList" label="不分列表" value="selectList"> </el-option>
+                  </common-select>
+                </el-tooltip>
+              </el-form-item>
+            </el-col>
+          </el-row>
           <el-form-item>
             <common-button type="primary" @click="handleAdd('dataSourceForm','dataSourceWindow')">添加/修改/删除数据源</common-button>
           </el-form-item>
@@ -103,22 +117,29 @@
               <el-input type="textarea" :rows="3" style="width:500px" v-model="codeForm.queryParams" placeholder="selectPager::user_name@@like,user_enable@@eq"></el-input>
             </el-tooltip>
           </el-form-item>
-          <el-form-item prop="createtime" label="创建时间">
-            <el-input v-model="codeForm.createtime" disabled></el-input>
-          </el-form-item>
           <el-form-item >
             <common-button type="primary" @click="save()">保存</common-button>
-            <common-button type="primary">取消</common-button>
+            <common-button type="primary" @click="addWindow = false">取消</common-button>
           </el-form-item>
         </el-form>
       </el-dialog>
     <el-card >
-      <common-table ref="table" height="58vh" :url="url" :columns="columns" fit autoLoad :formOptions="formOptions" @select-all="handleSelect" @select="handleSelect" >
+      <common-table
+      ref="table"
+      height="58vh"
+      :url="url"
+      :columns="columns"
+      fit
+      autoLoad
+      :formOptions="formOptions"
+      method="post"
+      @select-all="handleSelect"
+      @select="handleSelect" >
         <template slot-scope="scope" slot="edit">
             <common-button @click="handleEdit(scope.$index, scope.row)">编辑</common-button>
             <common-button type="danger" @click="hanleDel(scope.row)">删除</common-button>
         </template>
-        <template slot-scope="scope" slot="buttons">
+        <template slot="buttons">
           <div style="margin-top:1">
             <common-button  type="primary" @click="handleAdd('form','addWindow')">新增</common-button>
             <common-button  type="primary"  @click="generateCode()">生成代码</common-button>
@@ -153,11 +174,13 @@
          author: '',
          module: '',
          queryParams: '',
-         tableName: ''
+         tableName: '',
+         outpath: ''
        },
        url: '/system/getSysCodegenConfigByPager',
        formOptions: {
          inline: true,
+         showSearchBtn: true,
          showResetBtn: true,
          submitBtnText: '查询',
          resetBtnText: '重置',
@@ -173,36 +196,17 @@
          ]
        },
        columns: [{
-         colType: 'selection'
-       }, {
-         prop: 'id',
-         label: 'id', width: 50
-       },
-       { prop: 'module',
-         label: '模块标识', width: 100
-       },
-       { prop: 'tableName',
-         label: '表名', width: 180
-       },
-       { prop: 'author',
-         label: '作者', width: 80
-       },
-       { prop: 'outpath',
-         label: '输出路径', width: 80
-       },
-       { prop: 'genType',
-         label: '代码类型(增删改查选择)', width: 260
-       },
-       {
-         prop: 'queryParams',
-         label: '查询参数', width: 260, showOverflowTooltip: true
-       },
-       { prop: 'datasourceId',
-         label: '数据源Id', width: 80 },
-       { prop: 'createtime',
-         label: '创建时间' },
-       { prop: 'test',
-         label: '操作', slotName: 'edit', width: 200 }],
+         type: 'selection' },
+       { prop: 'id', label: 'id', width: 50 },
+       { prop: 'module', label: '模块标识', width: 100 },
+       { prop: 'tableName', label: '表名', width: 180 },
+       { prop: 'author', label: '作者', width: 80 },
+       { prop: 'outpath', label: '输出路径', width: 80, showOverflowTooltip: true },
+       { prop: 'genType', label: '代码类型(增删改查选择)', width: 260 },
+       { prop: 'queryParams', label: '查询参数', width: 260, showOverflowTooltip: true },
+       { prop: 'datasourceId', label: '数据源Id', width: 80 },
+       { prop: 'createtime', label: '创建时间' },
+       { prop: 'test', label: '操作', slotName: 'edit', width: 200 }],
        dataSources: [],
        generateCodeList: [],
        tables: []
@@ -212,7 +216,7 @@
 
    },
    mounted() {
-     this.getDataSources()
+     //  this.getDataSources()
      this.getTables()
    },
    methods: {
@@ -239,18 +243,9 @@
        })
      },
      handleAdd(form, formShowKey) {
-       if (typeof (this.$refs[form]) !== 'undefined') {
-         this.$refs[form].resetFields()
-         console.log('rest sss')
-       }
        this[formShowKey] = true
-     },
-     getTables() {
-       request({
-         url: '/system/proxyExcute?uuid=8c010037-6df3-4d69-be32-e61f7a8dbcc1',
-         method: 'get'
-       }).then(response => {
-         this.tables = response.data
+       this.$nextTick(() => {
+         this.$refs[form].resetFields()
        })
      },
      getDataSources() {
@@ -261,8 +256,7 @@
          this.dataSources = response.data
        })
      },
-     handleSelect(select, row) {
-       console.log(select, row)
+     handleSelect(event, select, row) {
        this.generateCodeList = Object.assign([], select)
      },
      generateCode() {

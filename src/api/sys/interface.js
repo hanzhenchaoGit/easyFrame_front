@@ -31,4 +31,11 @@ export function proxy(params) {
     params: params
   })
 }
+export function upload(formData) {
+  return request({
+    url: '/file/upload',
+    method: 'post',
+    data: formData
+  })
+}
 

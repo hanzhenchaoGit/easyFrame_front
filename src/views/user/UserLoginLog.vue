@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card >
-      <common-table ref="table" height="66vh" show-overflow-tooltip :url="url" :columns="columns" fit autoLoad :formOptions="formOptions"  >
+      <common-table ref="table" height="66vh" method="post" show-overflow-tooltip :url="url" :columns="columns" fit autoLoad :formOptions="formOptions"  >
       </common-table>
       </el-card>
     </div>

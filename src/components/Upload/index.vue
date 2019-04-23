@@ -19,10 +19,11 @@
       :before-upload="beforeUpload"
       :on-success="onSuccess"
       :file-list="list"
+      :accept="accept"
       :disabled = "disabled"
       >
         <common-button ref="selectFile"  v-show="false"><svg-icon icon-class="upload"></svg-icon></common-button>
-        <common-button @click.stop @click="uploadWindow = true"><svg-icon icon-class="upload"></svg-icon>上传附件</common-button>
+        <common-button @click.stop @click="openRemarkWindow"><svg-icon icon-class="upload"></svg-icon>上传附件</common-button>
       <div slot="tip" class="el-upload__tip" style="color:red">文件格式限制{{limitTypes}},文件大小不能超过{{limitFileSize}}M</div>
     </el-upload>
   </div>
@@ -43,13 +44,14 @@
         list: []
       }
     },
-    watch: {
-      'file.groupid'(n, o) {
-        this.getFileList()
-      }
-    },
+    // watch: {
+    //   'file.groupid'(n, o) {
+    //     this.getFileList()
+    //   }
+    // },
     methods: {
       getFileList() {
+        console.log(1111111111)
         if (this.file.groupid) {
           this.$request({
             url: '/file/getFileList',
@@ -66,13 +68,13 @@
             })
             this.$set(this, 'list', fileList)
             // dom挂载完毕执行渲染
-            this.$nextTick(() => {
+            setTimeout(() => {
               const files = this.$refs.upload.$el.children[2].children
               for (let i = 0; i < files.length; i++) {
                 files[i].innerHTML = files[i].innerHTML.replace('<a class="el-upload-list__item-name">',
-                  '<a class="el-upload-list__item-name" href="' + this.list[i].url + '" download="' + this.list[i].name + '">')
+                  `<a class="el-upload-list__item-name" href="${fileList[i].url}" download="${fileList[i].name}">`)
               }
-            })
+            }, 3000)
           })
         }
       },
@@ -91,6 +93,7 @@
         let isvalid = false
         const fileType = file.name.substring(file.name.lastIndexOf('.') + 1)
         this.$refs.uploadForm.validate(valid => {
+          if (!valid) return false
           isvalid = valid
 
           const isLtM = file.size / 1024 / 1024 < this.limitFileSize * 10
@@ -130,12 +133,22 @@
         }
       },
       selectFile() {
-        this.$refs.selectFile.$el.click()
+        this.$refs.uploadForm.validate(valid => {
+          if (!valid) return
+          this.$refs.selectFile.$el.click()
+        })
+      },
+      openRemarkWindow() {
+        this.uploadWindow = true
+        this.$nextTick(() => {
+          this.$refs.uploadForm.resetFields()
+        })
       },
       onSuccess(response, file, fileList) {
         const groupid = response.data.groupid
         this.file.groupid = groupid
         this.getFileList()
+        this.uploadWindow = false
       },
       getGroupId() {
         return this.file.groupid

@@ -21,8 +21,8 @@ export function logout() {
 export function getUserInfo(username) {
   return request({
     url: '/user/info',
-    method: 'get',
-    params: {
+    method: 'post',
+    data: {
       userName: username
     }
   })

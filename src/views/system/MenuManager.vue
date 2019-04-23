@@ -38,6 +38,14 @@
               <el-input v-model="menu.component" style="width: 100%"></el-input>
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item prop="isshow" label="是否显示">
+              <common-select v-model="menu.isshow"  style="width: 100%" placeholder="是否显示">
+                <el-option key="Y" label="是" value="Y"> </el-option>
+                <el-option key="N" label="否" value="N"> </el-option>
+              </common-select>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -71,14 +79,6 @@
     <el-row>
       <el-col :span="8">
         <el-card class="cardcontainer">
-          <el-select v-model="role"  @change="changeRole" placeholder="请选择系统角色">
-            <el-option
-              v-for="item in roles"
-              :key="item.id"
-              :label="item.roleName"
-              :value="item.id">
-            </el-option>
-          </el-select>
           <common-button type="primary" v-waves v-has permission="add" @click="showAddPermission('permission','permissionWindow','permission')" >添加按钮权限字典</common-button>
           <el-tree
               :data="data" style="font-size:13px"
@@ -91,21 +91,20 @@
               @node-click="onNodeClick"
               >
             </el-tree>
-            <common-button type="primary" v-waves @click="saveRoleMenu">保存权限路由</common-button>
           </el-card>
       </el-col>
       <el-col :span="16">
         <el-card class="cardcontainer">
           <el-row>
             <el-col :span="24">
-              <common-button v-bind:disabled="!selectedData.id || selectedData.mtype === 'button'" @click="onAddMenu">新增</common-button>
+              <common-button v-bind:disabled="selectedData.mtype === 'button'" @click="onAddMenu">新增</common-button>
               <common-button v-bind:disabled="!selectedData.id" @click="onEditMenu">修改</common-button>
               <common-button v-bind:disabled="!selectedData.id" @click="onDel">删除</common-button>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row style="padding-top: 20px">
             <el-col :span="24">
-              <el-form ref="currentMenu" :model="selectedData" label-width="120px"  label-position="right">
+              <el-form ref="currentMenu" :model="selectedData" label-width="8 0px"  label-position="right">
                 <el-row>
                   <el-col :span="12">
                     <el-form-item prop="mtype" label="功能类型">
@@ -144,6 +143,14 @@
                   <el-col :span="12">
                     <el-form-item prop="component" label="组件路径">
                       <el-input v-model="selectedData.component" style="width: 100%" disabled></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item prop="isshow" label="是否显示">
+                      <common-select v-model="selectedData.isshow"  style="width: 100%" disabled placeholder="是否显示">
+                        <el-option key="Y" label="是" value="Y"> </el-option>
+                        <el-option key="N" label="否" value="N"> </el-option>
+                      </common-select>
                     </el-form-item>
                   </el-col>
                 </el-row>

@@ -110,7 +110,7 @@
                { prop: 'name', label: '作业名称' }
              ]
            },
-           columns: [{ colType: 'selection' },
+           columns: [{ type: 'selection' },
              { prop: 'taskName', label: '作业名称' },
              { prop: 'taskGroup', label: '作业组', width: 120 },
              { prop: 'description', label: '描述', showOverflowTooltip: true },

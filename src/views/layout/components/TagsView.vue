@@ -4,11 +4,11 @@
       <router-link ref='tag' class="tags-view-item" :class="isActive(tag)?'active':''" v-for="tag in Array.from(visitedViews)"
         :to="tag.path" :key="tag.path" @contextmenu.prevent.native="openMenu(tag,$event)">
         {{tag.title}}
-        <span class='el-icon-close' @click.prevent.stop='closeSelectedTag(tag)'></span>
+        <span class='el-icon-close' v-show="visitedViews.length > 1" @click.prevent.stop='closeSelectedTag(tag)'></span>
       </router-link>
     </scroll-pane>
     <el-tag class="onLine" @click.stop type="info" size="medium">在线人数:{{onLineUserCount}}</el-tag>
-    <ul class='contextmenu' v-show="visible" :style="{left:left+'px',top:top+'px'}">
+    <ul class='contextmenu' v-show="visible&&visitedViews.length > 1" :style="{left:left+'px',top:top+'px'}">
       <li @click="closeSelectedTag(selectedTag)">关闭选中</li>
       <li @click="closeOthersTags">关闭其他</li>
       <li @click="closeAllTags">关闭所有</li>

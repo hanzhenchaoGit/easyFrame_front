@@ -1,5 +1,5 @@
 <template>
-  <el-form  :model="params" style ="margin-bottom: -13px;" :inline="inline" ref="form" @submit.native.prevent="searchHandler()"
+  <el-form class="form" :model="params" style ="margin-bottom: 5px;" :inline="inline" ref="form" @submit.native.prevent="searchHandler()"
     :label-width="labelWidth ? (labelWidth + 'px') : ''">
     <el-collapse v-model="activeName" style="text-align:left;border-bottom:0px solid white" v-if="forms&&formType==='collapse'">
       <el-collapse-item  name="1" style="border-bottom:0px solid white">
@@ -128,26 +128,25 @@
             :style="itemStyle + (form.itemWidth ? `width: ${form.itemWidth}px;` : '')"
             :picker-options="form.pickerOptions || {}" />
         </el-form-item>
-          <span class="form-buttons">
-            <common-button v-if="showSearchBtn"
-              type="primary"
-              :size="size"
-              @click.stop
-              svgIcon="search"
-              @click.exact="searchHandler"
-              :loading="submitLoading">
-              {{ submitBtnText }}
-            </common-button>
-            <common-button type="primary" :plain="true"
-              :size="size" v-if="showResetBtn"
-              @click.exact="resetForm"
-              svgIcon = "reset"
-              @click.stop
-              :loading="submitLoading">
-              {{ resetBtnText }}
-            </common-button>
-            <slot name="formbutton"></slot>
-          </span>
+
+        <common-button v-if="showSearchBtn"
+          type="primary"
+          :size="size"
+          @click.stop
+          svgIcon="search"
+          @click.exact="searchHandler"
+          :loading="submitLoading">
+          {{ submitBtnText }}
+        </common-button>
+        <common-button type="primary" :plain="true"
+          :size="size" v-if="showResetBtn"
+          @click.exact="resetForm"
+          svgIcon = "reset"
+          @click.stop
+          :loading="submitLoading">
+          {{ resetBtnText }}
+        </common-button>
+        <slot name="formbutton"></slot>
       </template>
   </el-form>
 </template>
@@ -338,8 +337,8 @@
 
 }
 .el-collapse-item__header {
-    height: 48px;
-    line-height: 48px;
+    height: 27px;
+    line-height: 27px;
     color: #303133;
     /* cursor: pointer; */
     border-bottom: 0px solid #ebeef5;

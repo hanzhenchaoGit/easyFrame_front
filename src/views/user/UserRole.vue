@@ -23,12 +23,14 @@
           <common-button @click="onAddRole">添加</common-button>
           <common-button v-bind:disabled="role.table.selected===0" @click="onEditRole">修改</common-button>
           <common-button v-bind:disabled="role.table.selected===0" type="danger" @click="onDelRole" >删除</common-button>
-          <ag-table
+          <common-button type="primary" @click="onSearch" >查询</common-button>
+          <common-table
             ref="roleTable"
             :url="role.table.url"
-            :columnDefs="role.table.columnDefs"
-            rowSelection="single"
-            @onSelect="onSelectRole" @loadDone="onLoadDone" ></ag-table>
+            method="post"
+            height="70vh"
+            :columns="role.table.columnDefs"
+            @select="onSelectRole" @loadDone="onLoadDone" ></common-table>
         </el-card>
       </el-col>
       <el-col :span="16">
@@ -78,12 +80,8 @@
           table: {
             url: '/user/getRoleList',
             columnDefs: [
-              { headerName: '序号', pinned: 'left',
-                cellRenderer: (params) => Number(params.node.id) + 1,
-                headerCheckboxSelection: true,
-                headerCheckboxSelectionFilteredOnly: true,
-                checkboxSelection: true },
-              { headerName: '角色名称', field: 'roleName' }
+              { type: 'selection' },
+              { label: '角色名称', prop: 'roleName' }
             ],
             selected: []
           }
@@ -97,6 +95,9 @@
       this.getTreeData()
     },
     methods: {
+      onSearch() {
+        this.$refs.roleTable.fetchHandler()
+      },
       getTreeData() {
         this.$request({
           url: '/system/getSysMenusList'
@@ -104,8 +105,7 @@
           this.tree.data = response.data
         })
       },
-      onSelectRole(selected, api) {
-        console.log('tag', selected)
+      onSelectRole(event, selected, row) {
         if (selected.length > 0) {
           this.role.table.selected = selected
           if (selected[0].menuids) {

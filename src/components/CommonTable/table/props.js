@@ -72,12 +72,12 @@ const props = {
     type: String,
     default: 'data.total'
   },
-  params: {
-    type: Object,
-    default: () => {
-      return {}
-    }
-  },
+  // params: {
+  //   type: Object,
+  //   default: () => {
+  //     return {}
+  //   }
+  // },
   formOptions: {
     type: Object,
     default: () => {
@@ -187,7 +187,7 @@ const props = {
   },
   pageIndexKey: {
     type: String,
-    default: 'currentPage'
+    default: 'pageNumber'
   },
   pageSizeKey: {
     type: String,

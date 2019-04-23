@@ -40,13 +40,14 @@
       :current-row-key="currentRowKey"
       :row-class-name="rowClassName"
       :row-style="rowStyle"
-      :row-ket="rowKey"
+      :row-key="rowKey"
       :empty-text="emptyText"
       :default-expand-all="defaultExpandAll"
       :expand-row-keys="expandRowKeys"
       :default-sort="defaultSort"
       :tooltip-effect="tooltipEffect"
       :show-summary="showSummary"
+      show-overflow-tooltip
       :sum-text="sumText"
       :summary-method="summaryMethod"
       @select="(selection, row) => emitEventHandler('select', selection, row)"
@@ -68,7 +69,7 @@
       >
 
       <slot name="prepend" />
-      <column v-for="(item,index) in columns" :key="index" :column="item">
+      <column v-for="(item,index) in columns" :key="index" :column="item" :rowKey="rowKey">
         <template :slot="item.slotName" slot-scope="scope"  :scope="newSlotScope ? 'scope' : false ">
           <slot :name="item.slotName" v-bind:row="scope.row"/>
         </template>
@@ -77,25 +78,13 @@
 
     </el-table>
     <span style="float:left;margin-top: 10px;">
-      <el-select v-model="exportCurrent" v-has permission="export" placeholder="请选择导出数据范围">
-        <el-option
-          key="current"
-          label="导出当前页"
-          value="exportCurrent">
-        </el-option>
-        <el-option
-          key="all"
-          label="导出所有数据"
-          value="exportAll">
-        </el-option>
-      </el-select>
       <common-button v-has permission="export" @click="doExport()"><svg-icon icon-class='export_btn'></svg-icon>导出</common-button>
     </span>
     <div v-if="showPagination" style="margin-top: 10px;">
       <el-pagination background style="float: right;"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="pagination.currentPage"
+        :current-page="pagination.pageNumber"
         :page-sizes="pageSizes"
         :page-size="pagination.pageSize"
         :layout="paginationLayout"
@@ -111,6 +100,7 @@
   import request from '@/utils/request'
   import searchForm from '../search/index.vue'
   import column from '../column/index'
+  import Sortable from 'sortablejs'
   export default {
     name: 'ElSearchTablePagination',
     components: {
@@ -122,7 +112,7 @@
       return {
         Vue,
         pagination: {
-          currentPage: 1,
+          pageNumber: 1,
           pageSize: (() => {
             const { pageSizes } = _this
             if (pageSizes.length > 0) {
@@ -136,7 +126,9 @@
         tableData: [],
         cacheLocalData: [],
         exportCurrent: 'exportCurrent',
-        selectData: []
+        selectData: [],
+        params: {},
+        selectCol: ''
       }
     },
     computed: {
@@ -149,14 +141,14 @@
         this.pagination.pageSize = size
         this.dataChangeHandler()
       },
-      handleCurrentChange(currentPage) {
-        this.pagination.currentPage = currentPage
+      handleCurrentChange(pageNumber) {
+        this.pagination.pageNumber = pageNumber
         this.dataChangeHandler()
       },
       // 添加是否导出
-      searchHandler(resetcurrentPage = true, isExp) {
-        if (resetcurrentPage) {
-          this.pagination.currentPage = 1
+      searchHandler(resetpageNumber = true, isExp) {
+        if (resetpageNumber) {
+          this.pagination.pageNumber = 1
         }
         if (isExp) {
           return this.getReqInfo(arguments[0])
@@ -176,9 +168,9 @@
         }
       },
       dataFilter(data) {
-        const { currentPage, pageSize } = this.pagination
+        const { pageNumber, pageSize } = this.pagination
         return data.filter((v, i) => {
-          return i >= (currentPage - 1) * pageSize && i < currentPage * pageSize
+          return i >= (pageNumber - 1) * pageSize && i < pageNumber * pageSize
         })
       },
       dataFilterHandler(formParams) {
@@ -228,7 +220,7 @@
         params = JSON.parse(JSON.stringify(Object.assign(params, formParams)))
         if (showPagination) {
           params = Object.assign(params, {
-            [pageIndexKey]: pagination.currentPage,
+            [pageIndexKey]: pagination.pageNumber,
             [pageSizeKey]: pagination.pageSize
           })
         }
@@ -241,19 +233,39 @@
       },
       // 导出Excel
       doExport() {
-        const reqInfo = this.$refs.searchForm.submitHandler(true, true)
-        const { url, params } = reqInfo
+        // const reqInfo = this.$refs.searchForm.submitHandler(true, true)
+        // const { url, params } = reqInfo
 
-        let paramsStr = '' // 99999999
-        for (const key in params) {
-          paramsStr += key + '=' + params[key] + '&'
-        }
-        paramsStr += 'exportType=' + this.exportCurrent
-        if (url.indexOf('uuid=') > -1) {
-          window.open(this.baseUrl + url + '&' + paramsStr)
-        } else {
-          window.open(this.baseUrl + url + '?' + paramsStr)
-        }
+        // let paramsStr = '' // 99999999
+        // for (const key in params) {
+        //   paramsStr += key + '=' + params[key] + '&'
+        // }
+        // paramsStr += 'exportType=' + this.exportCurrent
+        // if (url.indexOf('uuid=') > -1) {
+        //   window.open(this.baseUrl + url + '&' + paramsStr)
+        // } else {
+        //   window.open(this.baseUrl + url + '?' + paramsStr)
+        // }
+        const { params } = this.getReqInfo()
+        const data = Object.assign(params, { export: true })
+        request({ url: this.url, method: this.method, data, responseType: 'blob', headers: { type: 'download' }})
+          .then(response => {
+            // console.log(response)
+            // // const disposition = this.getDisposition(response.headers.get('content-disposition'))
+            // // const fileName = disposition[`filename*`] || disposition[`filename`]
+
+            // saveAs(response.data, decodeURI('xxxx.xls'))
+            // if (!data) {
+            //     return;
+            // }
+            const url = window.URL.createObjectURL(new Blob([response.data]))
+            const link = document.createElement('a')
+            link.style.display = 'none'
+            link.href = url
+            link.setAttribute('download', '1231231.xls')
+            document.body.appendChild(link)
+            link.click()
+          }).catch(e => console.log(e, ''))
       },
       fetchHandler(formParams = {}) {
         this.loading = true
@@ -272,41 +284,6 @@
         }
         requestObject.then(response => {
           const result = response.data
-          // const _this = this
-          // if (this.showPagination && result.items.length > 0) {
-          //   result.items.map(res => {
-          //     if (this.editProps.split(',')) {
-          //       this.editProps.split(',').forEach(prop => {
-          //         _this.$set(res, prop, false)
-          //       })
-          //     } else {
-          //       this.$set(res, 'edit', false)
-          //     }
-          //   })
-          // } else if (result.length > 0) {
-          //   result.items.map(res => {
-          //     if (this.editProps.split(',')) {
-          //       this.editProps.split(',').forEach(prop => {
-          //         _this.$set(res, prop, false)
-          //       })
-          //     } else {
-          //       this.$set(res, 'edit', false)
-          //     }
-          //   })
-          // }
-          // if (response && !(response instanceof Array)) {
-          //   if (listField && listField.indexOf('.') !== -1) {
-          //     listField.split('.').forEach(vv => {
-          //       result = result[vv]
-          //     })
-          //   } else {
-          //     result = response[listField]
-          //   }
-          // }
-          // if (!result || !(result instanceof Array)) {
-          //   this.loading = false
-          //   return false
-          // }
           if (this.showPagination) {
             if (this.dataHandler) {
               this.tableData = result.map(this.dataHandler)
@@ -317,23 +294,8 @@
             this.tableData = result
           }
 
-          // const totalValue = response
-          // if (Object.prototype.toString.call(response) === '[object Array]') {
-          //   totalValue = response.length
-          // } else if (typeof response === 'object') {
-          //   if (totalField && totalField.indexOf('.') !== -1) {
-          //     totalField.split('.').forEach(vv => {
-          //       totalValue = totalValue[vv]
-          //     })
-          //   } else {
-          //     totalValue = response[totalField]
-          //   }
-          // } else {
-          //   totalValue = 0
-          // }
-
           // 查询结束后清空 table内的params避免 重置外置表单时 之前的查询参数依然存在
-          // this.$set(this, 'params', {})
+          this.$set(this, 'params', {})
           this.total = result.total
           this.loading = false
         }).catch(() => {
@@ -343,7 +305,34 @@
       emitEventHandler(event) {
         if (event === 'select' || event === 'select-all') {
           this.$set(this, 'selectData', ...Array.from(arguments).slice(1))
+        } else if (event === 'header-click') {
+          const colClass = arguments[1].id
+
+          const elT = document.getElementsByClassName(arguments[1].id)
+
+          if (this.selectCol === colClass) {
+            this.selectCol = colClass
+            for (const el of elT) {
+              el.style.background = 'blue'
+            }
+          } else {
+            this.selectCol = ''
+            for (const el of elT) {
+              el.style.background = 'white'
+            }
+          }
         }
+        // else if (event === 'current-change') {
+        //   const current = Array.from(arguments)[1]
+        //   this.$refs.table.clearSelection()
+        //   this.tableData.forEach(item => {
+        //     // 排他,每次选择时把其他选项都清除
+        //     if (item[this.rowKey] !== current[this.rowKey]) {
+        //       this.$refs.table.toggleRowSelection(current, true)
+        //       this.$emit('select', ...Array.from(arguments))
+        //     }
+        //   })
+        // }
         this.$emit(event, ...Array.from(arguments))
       },
       loadLocalData(data) {
@@ -361,25 +350,64 @@
       },
       getClass(a, b, c) {
         return 'smallCell'
+      },
+      // 行拖拽
+      rowDrop() {
+        const tbody = document.querySelector('.el-table__body-wrapper tbody')
+        const _this = this
+        Sortable.create(tbody, {
+          onEnd({ newIndex, oldIndex }) {
+            const currRow = _this.tableData.splice(oldIndex, 1)[0]
+            _this.tableData.splice(newIndex, 0, currRow)
+          }
+        })
+      },
+      // 列拖拽
+      columnDrop() {
+        const wrapperTr = document.querySelector('.el-table__header-wrapper tr')
+        this.sortable = Sortable.create(wrapperTr, {
+          animation: 180,
+          delay: 0,
+          onEnd: evt => {
+            const oldItem = this.columns[evt.oldIndex]
+            this.columns.splice(evt.oldIndex, 1)
+            this.columns.splice(evt.newIndex, 0, oldItem)
+          }
+        })
       }
     },
     mounted() {
       // event: expand changed to `expand-change` in Element v2.x
       this.$refs['table'].$on('expand', (row, expanded) => this.emitEventHandler('expand', row, expanded))
-      const { type, autoLoad, data, formOptions, params } = this
-      if (type === 'remote' && autoLoad) {
-        if (formOptions) {
-          this.$refs['searchForm'].getParams((error, formParams) => {
-            if (!error) {
-              this.fetchHandler(Object.assign(formParams, params))
-            }
-          })
-        } else {
-          this.fetchHandler(params)
+      // const { type, autoLoad, data, formOptions, params } = this
+      // if (type === 'remote' && autoLoad) {
+      //   if (formOptions) {
+      //     this.$refs['searchForm'].getParams((error, formParams) => {
+      //       if (!error) {
+      //         this.fetchHandler(Object.assign(formParams, params))
+      //       }
+      //     })
+      //   } else {
+      //     this.fetchHandler(params)
+      //   }
+      // } else if (type === 'local') {
+      //   this.loadLocalData(data)
+      // }
+      document.removeEventListener('keyup', function() {})
+      document.addEventListener('keyup', function(event) {
+        console.log('111')
+        if ((event.keyCode === 91 && event.keyCode === 67)) {
+          console.log('ct')
         }
+      })
+      const { type, autoLoad, data } = this
+      if (type === 'remote' && autoLoad) {
+        this.fetchHandler()
       } else if (type === 'local') {
         this.loadLocalData(data)
       }
+      this.rowDrop()
+      this.columnDrop()
     },
     watch: {
       data: function(value) {

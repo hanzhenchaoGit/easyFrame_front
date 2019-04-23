@@ -29,6 +29,15 @@ const props = {
   },
   accept: {
     type: String
+  },
+  uploadType: {
+    type: String,
+    default() {
+      return 'imgWall'
+    }
+    // 正常列表： list
+    // 照片墙：imgWall
+    // 头像：
   }
 }
 export default props

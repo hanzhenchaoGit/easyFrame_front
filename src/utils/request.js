@@ -35,7 +35,11 @@ service.interceptors.response.use(
   * 下面的注释为通过response自定义code来标示请求状态，当code返回如下情况为权限有问题，登出并返回到登录页
   * 如通过xmlhttprequest 状态码标识 逻辑可写在下面error中
   */
+    if (response.config.headers.type === 'download') {
+      return response
+    }
     const res = response.data
+
     if (res.code !== 20000) {
       // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;
       if (res.code === 50008 || res.code === 50012 || res.code === 50004) {

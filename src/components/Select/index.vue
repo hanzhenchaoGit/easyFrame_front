@@ -16,16 +16,12 @@
         v-for="item in remoteData"
         :key="item[keyKey]"
         :label="item[nameKey]"
-        :value="item[valueKey]">
+        :value="item[valueKey]"
+        >
         <span style="margin-right:3px" v-for="field in fields" :key="item[field]">{{item[field]}}</span>
       </el-option>
-      <el-option else
-        v-for="item in data"
-        :key="item[valueKey]"
-        :label="item[nameKey]"
-        :value="item[valueKey]">
-        <span style="margin-right:3px" v-for="field in fields" :key="item[field]">{{item[field]}}</span>
-      </el-option>
+      <slot else>
+      </slot>
     </el-select>
 </template>
 
@@ -73,16 +69,16 @@
           this.$emit('input', val)
           this.setDataAndTextName(val)
         },
-        loadData(paramString) {
+        loadData(param) {
           this.remoteLoading = true
           if (this.url) {
-            let queryUrl = this.url
-            if (paramString) {
-              queryUrl = this.url + '&' + paramString
-            }
+            const queryUrl = this.url
+            let data = {}
+            data = param || this.params
             request({
               url: queryUrl,
-              method: 'get'
+              method: 'post',
+              data
             }).then(response => {
               this.$emit('load', response.data)
               this.remoteLoading = false

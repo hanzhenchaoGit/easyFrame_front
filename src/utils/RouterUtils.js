@@ -20,6 +20,7 @@ export function getRouters(routers) {
       routerRes = {
         path: routers[i].path,
         name: routers[i].name,
+        hidden: routers[i].isshow === 'N',
         component: () => import('@/views/' + routers[i].component + '.vue'),
         meta: {
           title: routers[i].label,

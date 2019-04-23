@@ -1,6 +1,6 @@
 <template>
-  <div class="login-container" v-if="!fromCs">
-    <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
+  <div class="login-container">
+    <el-form class="login-form" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
       <div class="title-container">
         <h3 class="title">EasyFrame</h3>
       </div>
@@ -15,14 +15,15 @@
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
-        <el-input name="password" :type="passwordType"  @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="password" />
+        <el-input name="password" :type="passwordType" v-model="loginForm.password" autoComplete="on" placeholder="password" />
         <span class="show-pwd" @click="showPwd">
           <svg-icon icon-class="eye" />
         </span>
       </el-form-item>
 
-      <common-button type="primary" class="login-button" :loading="loading" @click.native.prevent="handleLogin">登录</common-button>
+      <common-button type="primary" class="login-button" :loading="loading" @click="handleLogin">登录</common-button>
     </el-form>
+
   </div>
 </template>
 
@@ -35,18 +36,6 @@ export default {
   name: 'login',
   mounted() {
     this.$set(this.loginForm, 'username', localStorage.getItem('username'))
-    const url = location.href.split('?')[1]
-    if (url) {
-      this.fromCs = true
-      const params = {}
-      const strs = url.split('&')
-      for (var i = 0; i < strs.length; i++) {
-        params[strs[i].split('=')[0]] = unescape(strs[i].split('=')[1])
-      }
-      if (params.username && params.password) {
-        this.postLogin(params)
-      }
-    }
   },
   data() {
     const validateUsername = (rule, value, callback) => {
@@ -74,8 +63,7 @@ export default {
       },
       passwordType: 'password',
       loading: false,
-      showDialog: false,
-      fromCs: false
+      showDialog: false
     }
   },
   methods: {
@@ -95,6 +83,7 @@ export default {
       })
     },
     handleLogin() {
+      // console.log('1111', '')
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
@@ -137,7 +126,7 @@ export default {
 </style>
 
 <style rel="stylesheet/scss" lang="scss">
-$bg:rgba(26, 188, 156, 1);
+$bg:#222928;;
 $light_gray:#eee;
 
 .login-button{
@@ -177,8 +166,8 @@ $light_gray:#eee;
 </style>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-$bg:rgba(26, 188, 156, 1);
-$dark_gray:#889aa4;
+$bg:#32373a;
+$dark_gray:#32373a;
 $light_gray:#eee;
 
 .login-container {

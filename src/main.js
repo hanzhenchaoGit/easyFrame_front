@@ -30,7 +30,7 @@ import commonUpload from '@/components/Upload'
 import AgTable from '@/components/AgTable'
 import * as filters from './filters' // global filters
 import request from '@/utils/request'
-
+import 'handsontable/dist/handsontable.full.css'
 // axios 请求挂在到vue
 Vue.prototype.$request = request
 Vue.prototype.$Message = Element.Message
@@ -48,6 +48,8 @@ Vue.component('common-select', commonSelect)
 Vue.component('common-upload', commonUpload)
 Vue.component('ag-table', AgTable)
 Vue.prototype.baseUrl = 'http://' + location.host.replace(location.port, '9999')
+Vue.prototype.uploadPath = `http://localhost:9999/file/upload`
+Vue.prototype.filePath = `http://localhost:9999/file/getFileById`
 Vue.prototype.defaultHeader = 'http://img3.imgtn.bdimg.com/it/u=2220182970,3184364485&fm=200&gp=0.jpg'
 // register global utility filters.
 Object.keys(filters).forEach(key => {

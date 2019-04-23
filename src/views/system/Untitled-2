@@ -1,0 +1,13 @@
+{ "field": "id", "name": "id" },
+{ "name": "测试", "children": [
+ {"name": "ffff", "children": [
+   { "field": "uuid", "name": "导出配置唯一标识"},
+{ "field": "urlPath", "name": "导出请求路径"}
+ ]},
+{ "field": "requestType", "name": "请求类型" },
+{ "field": "sheet_name", "name": "导出文件名" },
+{ "field": "istem", "name": "是否使用模板" },
+{ "field": "template", "name": "模板名称"},
+{ "field": "sqlField", "name": "数据字段名"},
+{ "field": "colfields", "name": "excel表头"}
+]}]

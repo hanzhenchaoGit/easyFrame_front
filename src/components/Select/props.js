@@ -38,7 +38,12 @@ const props = {
     type: String,
     default: 'name'
   },
-
+  params: {
+    type: Object,
+    default() {
+      return {}
+    }
+  },
   clearable: Boolean,
   collapseTags: Boolean,
   multipleLimit: Number,

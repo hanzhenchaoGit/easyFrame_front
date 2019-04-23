@@ -1,5 +1,6 @@
 const props = {
   row: {},
+  rowKey: '',
   column: {
     type: Object,
     required: true,
